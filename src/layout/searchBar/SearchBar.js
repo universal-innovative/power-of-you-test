@@ -39,7 +39,7 @@ const Schema = Yup.object().shape({
     .max(50, "Too Long!")
     .required("Search term required"),
 });
-const SearchBar = React.forwardRef(({ setSearchTerm }, ref) => {
+const SearchBar = React.forwardRef(({ setSearchTerm, searchTerm }, ref) => {
   // const { categories } = useDatabases();
 
   const navigate = useNavigate();
@@ -50,33 +50,8 @@ const SearchBar = React.forwardRef(({ setSearchTerm }, ref) => {
       search: "",
     },
     validationSchema: Schema,
-    onSubmit: (values) => {
-      setSearchTerm(values.search);
-    },
   });
-  const { setFieldValue, handleSubmit, errors, touched } = formik;
-  // const handleCancel = React.useCallback(() => {
-  //   setFieldValue('');
-  //   if (onCancelSearch) {
-  //     onCancelSearch();
-  //   }
-  // }, [onCancelSearch]);
-
-  const handleKeyUp = React.useCallback(
-    (e) => {
-      if (e.charCode === 13 || e.key === "Enter") {
-        handleSubmit();
-      }
-      // else if (
-      //   cancelOnEscape &&
-      //   (e.charCode === 27 || e.key === 'Escape')
-      // ) {
-      //   // handleCancel();
-      //   console.log('esc')
-      // }
-    },
-    [handleSubmit]
-  );
+  const { errors, touched } = formik;
 
   useImperativeHandle(ref, () => ({
     focus: () => {
@@ -87,16 +62,11 @@ const SearchBar = React.forwardRef(({ setSearchTerm }, ref) => {
     },
   }));
   const handleChange = (e) => {
-    setFieldValue("search", e.currentTarget.value);
+    setSearchTerm(e.target.value);
   };
   return (
     <FormikProvider value={formik}>
-      <Form
-        onSubmit={handleSubmit}
-        autoComplete="off"
-        noValidate
-        sx={{ color: "#000", width: "100%" }}
-      >
+      <Form autoComplete="off" noValidate sx={{ color: "#000", width: "100%" }}>
         <Item>
           <Stack justifyContent={"space-between"}>
             <Stack direction={"row"} justifyContent={"space-between"}>
@@ -104,14 +74,13 @@ const SearchBar = React.forwardRef(({ setSearchTerm }, ref) => {
                 inputRef={inputRef}
                 onChange={handleChange}
                 onFocus={() => navigate(location.pathname, { replace: true })}
-                placeholder={"Search"}
-                onKeyUp={handleKeyUp}
+                value={searchTerm}
                 fullWidth
                 error={Boolean(touched.search && errors.search)}
                 helperText={touched.search && errors.search}
               />
 
-              <IconButton type="submit">
+              <IconButton>
                 <img src={filterIcon} alt="Search-icon" />
               </IconButton>
             </Stack>

@@ -114,6 +114,7 @@ export default function MainLayout() {
             {" "}
             <Outlet
               context={{
+                searchTerm,
                 serverState,
                 setCategory,
                 cart,

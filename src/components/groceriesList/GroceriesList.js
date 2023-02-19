@@ -3,7 +3,7 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
-
+import { filter } from "lodash";
 import { Stack, Typography, Link, Box, Button, Grid } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -12,10 +12,31 @@ import GroceryCard from "./GroceryCard";
 
 //------------Styled Components-----------//
 const categories = [`"All items"`, "Fruit", "Drinks", "Bakery"];
+
+function applyFilter(array, query) {
+  if (query) {
+    return filter(
+      array,
+      (item) =>
+        (item.title ? item?.title : item.firstName ? item.firstName : item.name)
+          ?.toLowerCase()
+          ?.indexOf(query?.toLowerCase()) !== -1
+    );
+  }
+  return array;
+}
+
 const GroceriesList = () => {
   //------Hooks------//
-  const { setCategory, serverState, cart, setCart, favorite, setFavorite } =
-    useOutletContext();
+  const {
+    setCategory,
+    serverState,
+    cart,
+    setCart,
+    favorite,
+    setFavorite,
+    searchTerm,
+  } = useOutletContext();
   const ref = useRef();
 
   const addToCart = (id) => {
@@ -68,35 +89,49 @@ const GroceriesList = () => {
             );
           })}
       </Box>
-      <Typography variant="h1">Trending Items</Typography>
-      <Grid container spacing={5}>
+      {!applyFilter(serverState?.groceries, searchTerm)?.length ? (
         <>
-          {serverState?.groceries?.map((grocery) => {
-            return (
-              <Grid item lg={6} md={12}>
-                <GroceryCard
-                  makeFavorite={() => makeFavorite(grocery.name)}
-                  favorite={favorite.includes(grocery.name)}
-                  image={grocery?.img}
-                  name={grocery?.name}
-                  description={grocery?.description}
-                  addedToCart={cart.includes(grocery.name)}
-                  available={
-                    grocery?.available < 10
-                      ? `Only ${grocery?.available} left`
-                      : "Available"
-                  }
-                  availableColor={
-                    grocery?.available < 10 ? "common.orange" : "common.green"
-                  }
-                  price={grocery?.price}
-                  addToCart={() => addToCart(grocery.name)}
-                />
-              </Grid>
-            );
-          })}
+          {" "}
+          <Typography variant="h1">Not available for this search</Typography>
         </>
-      </Grid>
+      ) : (
+        <>
+          {" "}
+          <Typography variant="h1">Trending Items</Typography>
+          <Grid container spacing={5}>
+            <>
+              {applyFilter(serverState?.groceries, searchTerm)?.map(
+                (grocery) => {
+                  return (
+                    <Grid item lg={6} md={12}>
+                      <GroceryCard
+                        makeFavorite={() => makeFavorite(grocery.name)}
+                        favorite={favorite.includes(grocery.name)}
+                        image={grocery?.img}
+                        name={grocery?.name}
+                        description={grocery?.description}
+                        addedToCart={cart.includes(grocery.name)}
+                        available={
+                          grocery?.available < 10
+                            ? `Only ${grocery?.available} left`
+                            : "Available"
+                        }
+                        availableColor={
+                          grocery?.available < 10
+                            ? "common.orange"
+                            : "common.green"
+                        }
+                        price={grocery?.price}
+                        addToCart={() => addToCart(grocery.name)}
+                      />
+                    </Grid>
+                  );
+                }
+              )}
+            </>
+          </Grid>
+        </>
+      )}
     </Stack>
   );
 };

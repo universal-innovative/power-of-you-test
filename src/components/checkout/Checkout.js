@@ -5,20 +5,25 @@ import {
 } from "react-router-dom";
 
 import { Stack, Typography, Link, Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-import MuiHidden from "../materialComponents/MuiHidden";
 import CheckoutCard from "./CheckoutCard";
-import { v4 as uuidv4 } from "uuid";
-import { string } from "yup";
+import SnackbarContext from "../snackbar/SnackbarContext";
+
+import { setSnackbar } from "../snackbar/MySnackbar";
 //------------Styled Components-----------//
 
-const GroceriesList = () => {
+const Checkout = () => {
   //------Hooks------//
   const navigate = useNavigate();
-  const { setCategory, serverState, cart, setCart, favorite, setFavorite } =
-    useOutletContext();
-
+  const { serverState, cart, setCart } = useOutletContext();
+  const { snackbarDispatch } = useContext(SnackbarContext);
   const addToCart = (id) => {
     window.localStorage.setItem("cart", JSON.stringify([...cart, id]));
     setCart([...cart, id]);
@@ -45,6 +50,40 @@ const GroceriesList = () => {
   };
   const cartItems =
     serverState?.groceries?.filter((el) => cart.includes(el.name)) || [];
+
+  useEffect(() => {
+    if (cart.filter((el) => el === "Coca-Cola").length === 6) {
+      window.localStorage.setItem(
+        "cart",
+        JSON.stringify([...cart, "Coca-Cola"])
+      );
+      setCart([...cart, "Coca-Cola"]);
+      snackbarDispatch(
+        setSnackbar(
+          true,
+          "success",
+          "Congratulations!! You got a free Coca-Cola"
+        )
+      );
+    }
+    console.log(
+      cart.filter((el) => el === "Croissants").length,
+      "Croissants Length"
+    );
+    if (
+      cart.filter((el) => el === "Croissants").length === 3 &&
+      window.localStorage.getItem("free") !== "Coffee"
+    ) {
+      console.log("Wow");
+      window.localStorage.setItem("cart", JSON.stringify([...cart, "Coffee"]));
+      window.localStorage.setItem("free", "Coffee");
+      setCart([...cart, "Coffee"]);
+      snackbarDispatch(
+        setSnackbar(true, "success", "Congratulations!! You got a free Coffee")
+      );
+    }
+  }, [cartItems]);
+
   return (
     <Stack>
       <Typography variant="h1">Checkout</Typography>
@@ -98,4 +137,4 @@ const GroceriesList = () => {
   );
 };
 
-export default GroceriesList;
+export default Checkout;
