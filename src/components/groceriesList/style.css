@@ -1,0 +1,14 @@
+.description {
+  margin: 0 !important;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+.grocery-image {
+  width: 50%;
+  height: 317;
+  object-fit: cover;
+}

@@ -1,0 +1,19 @@
+.MuiFormControl-root-MuiTextField-root label {
+  color: #8c8c8c;
+  margin-left: -0.5rem !important;
+}
+.MuiOutlinedInput-notchedOutline {
+  border: none;
+}
+.MuiInputLabel-animated {
+  color: #8c8c8c !important;
+}
+.MuiFormHelperText-root {
+  color: black;
+  z-index: 9999;
+  position: relative;
+}
+.stackIcons {
+  height: 56px;
+  width: 56px;
+}

@@ -1,0 +1,32 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M30 25V20H10V25H5V60H35V25H30Z" fill="#F0F0F0"/>
+<path d="M5 25H10V60H5V25Z" fill="#D2D2D2"/>
+<path d="M10 20H15V25H10V20Z" fill="#D2D2D2"/>
+<path d="M17.5 52.5H22.5V60H17.5V52.5Z" fill="#505050"/>
+<path d="M70 25V20H50V25H45V60H75V25H70Z" fill="#F0F0F0"/>
+<path d="M45 25H50V60H45V25Z" fill="#D2D2D2"/>
+<path d="M50 20H55V25H50V20Z" fill="#D2D2D2"/>
+<path d="M57.5 52.5H62.5V60H57.5V52.5Z" fill="#505050"/>
+<path d="M50 10L45 5V7.5H17.5V17.5H22.5V12.5H45V15L50 10Z" fill="#64C8F0"/>
+<path d="M17.5 7.5H20V17.5H17.5V7.5Z" fill="#46AAD2"/>
+<path d="M30 70L35 75V72.5H62.5V62.5H57.5V67.5H35V65L30 70Z" fill="#3CC8B4"/>
+<path d="M35 67.5V65L30 70L35 75V72.5L32.5 70L35 67.5Z" fill="#1EAA96"/>
+<path d="M10 30H15V35H10V30Z" fill="#FAB400"/>
+<path d="M17.5 30H22.5V35H17.5V30Z" fill="#FAB400"/>
+<path d="M25 30H30V35H25V30Z" fill="#FAB400"/>
+<path d="M10 37.5H15V42.5H10V37.5Z" fill="#FAB400"/>
+<path d="M17.5 37.5H22.5V42.5H17.5V37.5Z" fill="#FAB400"/>
+<path d="M25 37.5H30V42.5H25V37.5Z" fill="#FAB400"/>
+<path d="M10 45H15V50H10V45Z" fill="#FAB400"/>
+<path d="M17.5 45H22.5V50H17.5V45Z" fill="#FAB400"/>
+<path d="M25 45H30V50H25V45Z" fill="#FAB400"/>
+<path d="M50 30H55V35H50V30Z" fill="#FAB400"/>
+<path d="M57.5 30H62.5V35H57.5V30Z" fill="#FAB400"/>
+<path d="M65 30H70V35H65V30Z" fill="#FAB400"/>
+<path d="M50 37.5H55V42.5H50V37.5Z" fill="#FAB400"/>
+<path d="M57.5 37.5H62.5V42.5H57.5V37.5Z" fill="#FAB400"/>
+<path d="M65 37.5H70V42.5H65V37.5Z" fill="#FAB400"/>
+<path d="M50 45H55V50H50V45Z" fill="#FAB400"/>
+<path d="M57.5 45H62.5V50H57.5V45Z" fill="#FAB400"/>
+<path d="M65 45H70V50H65V45Z" fill="#FAB400"/>
+</svg>
