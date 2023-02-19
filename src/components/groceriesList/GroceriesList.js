@@ -40,15 +40,17 @@ const GroceriesList = () => {
   const ref = useRef();
 
   const addToCart = (id) => {
+    var index = cart.indexOf(id);
     if (!cart.includes(id)) {
       window.localStorage.setItem("cart", JSON.stringify([...cart, id]));
       setCart([...cart, id]);
-    } else {
+    } else if (index > -1) {
       window.localStorage.setItem(
         "cart",
-        JSON.stringify(cart.filter((item) => (item = id)))
+        JSON.stringify([...cart.slice(0, index), ...cart.slice(index + 1)])
       );
-      setCart(cart.filter((item) => item !== id));
+
+      setCart([...cart.slice(0, index), ...cart.slice(index + 1)]);
     }
   };
 

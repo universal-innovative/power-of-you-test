@@ -42,7 +42,7 @@ const CheckoutCard = ({
   cartLength,
   addToCart,
   reduceItemFromCart,
-  removeAllItemsByNameFromCart,
+  removeAllItemByNameFromCart,
 }) => {
   return (
     <Card
@@ -112,7 +112,7 @@ const CheckoutCard = ({
         </Grid>
       </Grid>
       <IconButton
-        onClick={removeAllItemsByNameFromCart}
+        onClick={removeAllItemByNameFromCart}
         sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}
       >
         {" "}
