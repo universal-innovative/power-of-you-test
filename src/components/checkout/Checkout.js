@@ -4,7 +4,15 @@ import {
   useOutletContext,
 } from "react-router-dom";
 
-import { Stack, Typography, Link, Box, Button, Grid } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  Link,
+  Box,
+  Button,
+  Grid,
+  Divider,
+} from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -21,8 +29,10 @@ import { setSnackbar } from "../snackbar/MySnackbar";
 
 const Checkout = () => {
   //------Hooks------//
+
   const navigate = useNavigate();
-  const { serverState, cart, setCart } = useOutletContext();
+  const { serverState, cart, setCart, discount, setDiscount } =
+    useOutletContext();
   const { snackbarDispatch } = useContext(SnackbarContext);
   const addToCart = (id) => {
     window.localStorage.setItem("cart", JSON.stringify([...cart, id]));
@@ -52,12 +62,15 @@ const Checkout = () => {
     serverState?.groceries?.filter((el) => cart.includes(el.name)) || [];
 
   useEffect(() => {
-    if (cart.filter((el) => el === "Coca-Cola").length === 6) {
+    if (
+      !window.localStorage.getItem("discount")?.includes("Coca-Cola") &&
+      cart.filter((el) => el === "Coca-Cola").length === 6
+    ) {
       window.localStorage.setItem(
-        "cart",
-        JSON.stringify([...cart, "Coca-Cola"])
+        "discount",
+        JSON.stringify([...discount, "Coca-Cola"])
       );
-      setCart([...cart, "Coca-Cola"]);
+      setDiscount([...discount, "Coca-Cola"]);
       snackbarDispatch(
         setSnackbar(
           true,
@@ -66,18 +79,47 @@ const Checkout = () => {
         )
       );
     }
+    if (
+      window.localStorage.getItem("discount")?.includes("Coca-Cola") &&
+      cart.filter((el) => el === "Coca-Cola").length === 5
+    ) {
+      window.localStorage.setItem(
+        "discount",
+        JSON.stringify(discount.filter((item) => item !== "Coca-Cola"))
+      );
+      setDiscount(discount.filter((item) => item !== "Coca-Cola"));
+      snackbarDispatch(
+        setSnackbar(true, "error", "Ewe!! You lost a free Coca-Cola")
+      );
+    }
+    if (
+      window.localStorage.getItem("discount")?.includes("Croissants") &&
+      cart.filter((el) => el === "Croissants").length === 2
+    ) {
+      window.localStorage.setItem(
+        "discount",
+        JSON.stringify(discount.filter((item) => item !== "Croissants"))
+      );
+      setDiscount(discount.filter((item) => item !== "Croissants"));
+      snackbarDispatch(
+        setSnackbar(true, "error", "Ewe!! You lost a free Cofee")
+      );
+    }
     console.log(
       cart.filter((el) => el === "Croissants").length,
       "Croissants Length"
     );
     if (
       cart.filter((el) => el === "Croissants").length === 3 &&
-      window.localStorage.getItem("free") !== "Coffee"
+      !window.localStorage.getItem("discount")?.includes("Croissants")
     ) {
       console.log("Wow");
-      window.localStorage.setItem("cart", JSON.stringify([...cart, "Coffee"]));
-      window.localStorage.setItem("free", "Coffee");
-      setCart([...cart, "Coffee"]);
+      window.localStorage.setItem(
+        "discount",
+        JSON.stringify([...discount, "Croissants"])
+      );
+
+      setDiscount([...cart, "Coffee"]);
       snackbarDispatch(
         setSnackbar(true, "success", "Congratulations!! You got a free Coffee")
       );
@@ -101,35 +143,75 @@ const Checkout = () => {
               </Button>
             </>
           ) : (
-            cartItems.map((item, i) => {
-              return (
-                <>
-                  <CheckoutCard
-                    cartLength={cart.filter((el) => el === item.name).length}
-                    image={item?.img}
-                    name={item?.name}
-                    productId={`Product Id: ${"xOY6bQO8gu48CSxCa4pHvM9DWqEHgBjt5pWxRBpOo8ayGLFdKwrxmTspPNY2I3uGcmkBGnbmGf0vQJzeOt5UXQ58NHSKyEFu6qY9"
-                      .split("")
-                      .slice(item.name.length, 9 + item.name.length)
-                      .join("")}`}
-                    available={
-                      item?.available < 10
-                        ? `Only ${item?.available} left`
-                        : "Available"
-                    }
-                    availableColor={
-                      item?.available < 10 ? "common.orange" : "common.green"
-                    }
-                    price={item?.price}
-                    addToCart={() => addToCart(item.name)}
-                    removeAllItemByNameFromCart={() =>
-                      removeAllItemByNameFromCart(item.name)
-                    }
-                    reduceItemFromCart={() => reduceItemFromCart(item.name)}
-                  />
-                </>
-              );
-            })
+            <>
+              {cartItems.map((item, i) => {
+                return (
+                  <>
+                    <CheckoutCard
+                      cartLength={cart.filter((el) => el === item.name).length}
+                      image={item?.img}
+                      name={item?.name}
+                      productId={`Product Id: ${"xOY6bQO8gu48CSxCa4pHvM9DWqEHgBjt5pWxRBpOo8ayGLFdKwrxmTspPNY2I3uGcmkBGnbmGf0vQJzeOt5UXQ58NHSKyEFu6qY9"
+                        .split("")
+                        .slice(item.name.length, 9 + item.name.length)
+                        .join("")}`}
+                      available={
+                        item?.available < 10
+                          ? `Only ${item?.available} left`
+                          : "Available"
+                      }
+                      availableColor={
+                        item?.available < 10 ? "common.orange" : "common.green"
+                      }
+                      price={item?.price}
+                      addToCart={() => addToCart(item.name)}
+                      removeAllItemByNameFromCart={() =>
+                        removeAllItemByNameFromCart(item.name)
+                      }
+                      reduceItemFromCart={() => reduceItemFromCart(item.name)}
+                    />
+                  </>
+                );
+              })}
+              <Stack>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" align="right">
+                      Subtotal
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography variant="h5" align="center"></Typography>
+                  </Grid>
+                  <Grid item xs={3}></Grid>
+                </Grid>
+                <Divider />
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" align="right">
+                      Discount
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography variant="h5" align="center"></Typography>
+                  </Grid>
+                  <Grid item xs={3}></Grid>
+                </Grid>
+                <Divider />
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Typography variant="h5" align="right">
+                      Total
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography variant="h5" align="center"></Typography>
+                  </Grid>
+                  <Grid item xs={3}></Grid>
+                </Grid>
+                <Divider />
+              </Stack>
+            </>
           )}
         </>
       </Stack>

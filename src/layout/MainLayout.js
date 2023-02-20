@@ -34,6 +34,11 @@ export default function MainLayout() {
       ? JSON.parse(window.localStorage.getItem("favorite"))
       : []
   );
+  const [discount, setDiscount] = useState(
+    window.localStorage.getItem("discount")
+      ? JSON.parse(window.localStorage.getItem("discount"))
+      : []
+  );
   return (
     <>
       <Box
@@ -117,6 +122,8 @@ export default function MainLayout() {
                 searchTerm,
                 serverState,
                 setCategory,
+                discount,
+                setDiscount,
                 cart,
                 setCart,
                 favorite,
