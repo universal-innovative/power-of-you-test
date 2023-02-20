@@ -25,11 +25,14 @@ import CheckoutCard from "./CheckoutCard";
 import SnackbarContext from "../snackbar/SnackbarContext";
 
 import { setSnackbar } from "../snackbar/MySnackbar";
+import { isArray } from "lodash";
 //------------Styled Components-----------//
 
 const Checkout = () => {
   //------Hooks------//
-
+  const [total, setTotal] = useState(null);
+  const [subTotal, setSubTotal] = useState(null);
+  const [totalDiscount, setTotalDiscount] = useState(null);
   const navigate = useNavigate();
   const { serverState, cart, setCart, discount, setDiscount } =
     useOutletContext();
@@ -93,14 +96,24 @@ const Checkout = () => {
       );
     }
     if (
-      window.localStorage.getItem("discount")?.includes("Croissants") &&
+      window.localStorage.getItem("discount")?.includes("Coffee") &&
       cart.filter((el) => el === "Croissants").length === 2
     ) {
+      var index = cart.indexOf("Coffee");
+
+      if (index > -1) {
+        window.localStorage.setItem(
+          "cart",
+          JSON.stringify([...cart.slice(0, index), ...cart.slice(index + 1)])
+        );
+
+        setCart([...cart.slice(0, index), ...cart.slice(index + 1)]);
+      }
       window.localStorage.setItem(
         "discount",
-        JSON.stringify(discount.filter((item) => item !== "Croissants"))
+        JSON.stringify(discount.filter((item) => item !== "Coffee"))
       );
-      setDiscount(discount.filter((item) => item !== "Croissants"));
+      setDiscount(discount.filter((item) => item !== "Coffee"));
       snackbarDispatch(
         setSnackbar(true, "error", "Ewe!! You lost a free Cofee")
       );
@@ -111,19 +124,58 @@ const Checkout = () => {
     );
     if (
       cart.filter((el) => el === "Croissants").length === 3 &&
-      !window.localStorage.getItem("discount")?.includes("Croissants")
+      !window.localStorage.getItem("discount")?.includes("Coffee")
     ) {
       console.log("Wow");
       window.localStorage.setItem(
         "discount",
-        JSON.stringify([...discount, "Croissants"])
+        JSON.stringify([...discount, "Coffee"])
       );
 
-      setDiscount([...cart, "Coffee"]);
+      setDiscount([...discount, "Coffee"]);
+      setCart([...cart, "Coffee"]);
       snackbarDispatch(
         setSnackbar(true, "success", "Congratulations!! You got a free Coffee")
       );
     }
+  }, [cartItems]);
+
+  const getTotal = async () => {
+    const res = await fetch(
+      "https://uxdlyqjm9i.execute-api.eu-west-1.amazonaws.com/s?category=all"
+    );
+    const data = await res.json();
+    if (data && Array.isArray(data)) {
+      const cartWithPrice = cart.map((el) => {
+        const obj = data.find((ite) => ite.name === el);
+
+        return Number(obj.price.split("£")[1]);
+      });
+      console.log(cartWithPrice);
+      const total = cartWithPrice.reduce((pr, ne) => pr + ne);
+      setTotal(total);
+    }
+  };
+  const getDiscount = async () => {
+    const res = await fetch(
+      "https://uxdlyqjm9i.execute-api.eu-west-1.amazonaws.com/s?category=all"
+    );
+    const data = await res.json();
+    if (data && Array.isArray(data)) {
+      const cartWithPrice = discount.map((el) => {
+        const obj = data.find((ite) => ite.name === el);
+
+        return Number(obj.price.split("£")[1]);
+      });
+      console.log(cartWithPrice);
+      const discountTotal = cartWithPrice.reduce((pr, ne) => pr + ne);
+      setTotalDiscount(discountTotal);
+    }
+  };
+  console.log(total);
+  useEffect(() => {
+    getTotal();
+    getDiscount();
   }, [cartItems]);
 
   return (
@@ -173,17 +225,19 @@ const Checkout = () => {
                   </>
                 );
               })}
-              <Stack>
+              <Stack spacing={3}>
                 <Grid container>
                   <Grid item xs={6}>
                     <Typography variant="h5" align="right">
                       Subtotal
                     </Typography>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Typography variant="h5" align="center"></Typography>
+                  <Grid item xs={5}>
+                    <Typography variant="h5" align="center">
+                      £: {total}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={3}></Grid>
+                  <Grid item xs={1}></Grid>
                 </Grid>
                 <Divider />
                 <Grid container>
@@ -192,22 +246,39 @@ const Checkout = () => {
                       Discount
                     </Typography>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Typography variant="h5" align="center"></Typography>
+                  <Grid item xs={5}>
+                    <Typography variant="h5" align="center">
+                      £: {totalDiscount}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={3}></Grid>
+                  <Grid item xs={1}></Grid>
                 </Grid>
                 <Divider />
                 <Grid container>
-                  <Grid item xs={6}>
+                  <Grid item xs={6} alignItems="flex-end">
                     <Typography variant="h5" align="right">
                       Total
                     </Typography>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Typography variant="h5" align="center"></Typography>
+                  <Grid item xs={5}>
+                    <Typography variant="h5" align="center">
+                      {" "}
+                      £: {total - totalDiscount}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={3}></Grid>
+                  <Grid item xs={1}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "common.green",
+                        color: "fff",
+                        fontFamily: "Almarai",
+                        marginLeft: "auto",
+                      }}
+                    >
+                      Checkout
+                    </Button>
+                  </Grid>
                 </Grid>
                 <Divider />
               </Stack>
